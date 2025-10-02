@@ -6,7 +6,7 @@
 open System
 
 type terminal = 
-    Add | Sub | UnarySub | Mul | Div | Lpar | Rpar | Num of int
+    Add | Sub | UnarySub | Mul | Div | Mod | Lpar | Rpar | Num of int
 
 let str2lst s = [for c in s -> c]
 let isblank c = System.Char.IsWhiteSpace c
@@ -14,6 +14,7 @@ let isdigit c = System.Char.IsDigit c
 let lexError = System.Exception("Lexer error")
 let intVal (c:char) = (int)((int)c - (int)'0')
 let parseError = System.Exception("Parser error")
+let divideByZeroError = System.Exception("Division by zero")
 
 let rec scInt(iStr, iVal) = 
     match iStr with
@@ -30,6 +31,7 @@ let lexer input =
                         | false -> UnarySub :: scan tail false
         | '*'::tail -> Mul :: scan tail false
         | '/'::tail -> Div :: scan tail false
+        | '%'::tail -> Mod :: scan tail false
         | '('::tail -> Lpar:: scan tail false
         | ')'::tail -> Rpar:: scan tail false
         | c :: tail when isblank c -> scan tail last_was_digit
@@ -46,7 +48,7 @@ let getInputString() : string =
 // <E>        ::= <T> <Eopt>
 // <Eopt>     ::= "+" <T> <Eopt> | "-" <T> <Eopt> | <empty>
 // <T>        ::= <NR> <Topt>
-// <Topt>     ::= "*" <NR> <Topt> | "/" <NR> <Topt> | <empty>
+// <Topt>     ::= "*" <NR> <Topt> | "/" <NR> <Topt> | "%" <NR> <Topt> | <empty>
 // <NR>       ::= "Num" <value> | "(" <E> ")" | "- (unary)" <NR>
 
 let parser tList = 
@@ -61,6 +63,7 @@ let parser tList =
         match tList with
         | Mul :: tail -> (NR >> Topt) tail
         | Div :: tail -> (NR >> Topt) tail
+        | Mod :: tail -> (NR >> Topt) tail
         | _ -> tList
     and NR tList =
         match tList with 
@@ -87,7 +90,11 @@ let parseNeval tList =
         | Mul :: tail -> let (tLst, tval) = NR tail
                          Topt (tLst, value * tval)
         | Div :: tail -> let (tLst, tval) = NR tail
-                         Topt (tLst, value / tval)
+                         match tval with
+                         | 0 -> raise divideByZeroError // check for division by 0
+                         | _ -> Topt (tLst, value / tval)
+        | Mod :: tail -> let (tLst, tval) = NR tail
+                         Topt (tLst, value % tval)
         | _ -> (tList, value)
     and NR tList =
         match tList with 
