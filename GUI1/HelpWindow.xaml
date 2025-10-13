@@ -1,0 +1,14 @@
+﻿<Window x:Class="GUI1.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GUI1"
+        mc:Ignorable="d"
+        Title="HelpWindow" Height="450" Width="800">
+    <Grid>
+        <TextBlock x:Name="Help_Menu_Text" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Height="338" Width="780" RenderTransformOrigin="0.501,0.482" Margin="0,10,0,0"><Run Text="Help Window:"/><LineBreak/><Run/><LineBreak/><Run Text="Functionalities:"/><LineBreak/><Run Text="&#x9;- Basic addition, multiplication, subtraction, division (Integer division and normal division)"/><LineBreak/><Run Text="&#x9;- Unary Sub and Modulus"/><LineBreak/><Run Text="&#x9;- Detection of division by zero"/><LineBreak/><Run Text="&#x9;- Works with both integers and floating point numbers"/><LineBreak/><Run/><LineBreak/><Run Text="Operators:"/><LineBreak/><Run Text="- Plus +"/><LineBreak/><Run Text="- Minus - "/><LineBreak/><Run Language="en-gb" Text="- Unary sub -- "/><LineBreak/><Run Text="- Multiply *"/><LineBreak/><Run Text="- Divide /"/><LineBreak/><Run Text="- Remainder/Mod %"/><LineBreak/><Run Text="- Power ^"/><LineBreak/><Run Text="- Brackets ( )"/><LineBreak/><Run Text="- Decimal point numbers ."/><LineBreak/><Run Text="- Trigonometric Functions --&gt; sin(, cos(, tan("/></TextBlock>
+        <Button x:Name="Exit_Button" Content="Exit Menu" HorizontalAlignment="Center" Margin="0,366,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+
+    </Grid>
+</Window>

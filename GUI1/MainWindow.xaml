@@ -1,0 +1,15 @@
+﻿<Window x:Class="GUI1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GUI1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <TextBox x:Name="Input_Text" HorizontalAlignment="Left" Margin="21,30,0,0" TextWrapping="Wrap" Text="Input Your Equation Here" VerticalAlignment="Top" Width="355" Height="161" MaxLength="64"/>
+        <Button Content="Help Menu" HorizontalAlignment="Right" Margin="0,404,727,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <Button x:Name="SendText_Button" Content="Compute" HorizontalAlignment="Left" Margin="21,217,0,0" VerticalAlignment="Top" Click="SendText_Button_Click"/>
+
+    </Grid>
+</Window>
