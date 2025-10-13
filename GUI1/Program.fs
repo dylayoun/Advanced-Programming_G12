@@ -6,15 +6,16 @@
 open System
 
 type terminal = 
-    Add | Sub | UnarySub | Mul | Div | Mod | Exp | Dot | Lpar | Rpar | Num of int
+    Add | Sub | UnarySub | Mul | Div | Mod | Exp | Dot
+    | Sin | Cos | Tan | Lpar | Rpar | Num of int
 
 let str2lst s = [for c in s -> c]
 let isblank c = System.Char.IsWhiteSpace c
 let isdigit c = System.Char.IsDigit c
-let lexError = System.Exception("Lexer error")
+let lexError message = raise (System.Exception(sprintf "Lexer error: %s" message))
 let intVal (c:char) = (int)((int)c - (int)'0')
-let parseError = System.Exception("Parser error")
-let divideByZeroError = System.Exception("Division by zero")
+let parseError message = raise (System.Exception(sprintf "Parser error: %s" message))
+let mathError message = raise (System.Exception(sprintf "Maths error: %s" message))
 
 
 // get how many of the first characters in a string are 0s
@@ -26,7 +27,9 @@ let rec getLeadingZeroes(iStr, count) =
     | _ -> (iStr, count)
 
 let rec removeTrailingZeroes(num) = 
-    if (num % 10 = 0) then
+    if (num = 0) then
+        0
+    elif (num % 10 = 0) then
         removeTrailingZeroes(num / 10)
     else
         num
@@ -37,6 +40,7 @@ let rec scInt(iStr, iVal) =
     | _ -> (iStr, iVal)
 
 // convert two integers a, b into double a.b
+// with rules of leading zeroes explained in lexer
 let intsToDouble(a:int, b:int) =
     match b with
     | 0 -> (double) a
@@ -61,18 +65,23 @@ let lexer input =
         | '('::tail -> Lpar:: scan tail false
         | ')'::tail -> Rpar:: scan tail false
         | '.'::tail -> Dot :: scan tail true
+        | 's'::'i'::'n'::'('::tail -> Sin :: scan tail false
+        | 'c'::'o'::'s'::'('::tail -> Cos :: scan tail false
+        | 't'::'a'::'n'::'('::tail -> Tan :: scan tail false
         | c :: tail when isblank c -> scan tail last_was_digit
 
         // it seems a bit odd but in order to store leading 0s in decimal numbers they are moved to the end of the number
-        // only if the last symbol was a number (i.e. this is a decimal)
+        // only if the last symbol was a number (i.e. this is a decimal) - this is so eg. 04 -> Num 4 but 23.04 -> Num 23 Dot Num 40
+        // there's almost definitely a cleaner way to do this but it works
         | c :: tail when isdigit c -> match last_was_digit with
                                       | true -> let (iStr, count) = getLeadingZeroes(tail, 0)
                                                 let (iStr, iVal) = scInt(tail, intVal c)
-                                                let modified_iVal = iVal * (int)(10.0 ** ((double)count+1.0))
+                                                let trunc_iVal = removeTrailingZeroes(iVal)
+                                                let modified_iVal = trunc_iVal * (int)(10.0 ** ((double)count+1.0))
                                                 Num modified_iVal :: scan iStr true
                                       | false -> let (iStr, iVal) = scInt(tail, intVal c)
                                                  Num iVal :: scan iStr true
-        | _ -> raise lexError
+        | _ -> lexError (sprintf "Unrecognised character '%c'" input[0])
     scan (str2lst input) false
 
 let getInputString() : string = 
@@ -86,7 +95,8 @@ let getInputString() : string =
 // <Topt>     ::= "*" <P> <Topt> | "/" <P> <Topt> | "%" <P> <Topt> | <empty>
 // <P>        ::= <NR> <Popt>
 // <Popt>     ::= "^" <NR> <Popt> | <empty>
-// <NR>       ::= "Num" <value> | "(" <E> ")" | "- (unary)" <NR> | <value> '.' <value>
+// <NR>       ::= "Num" <value> | "(" <E> ")" | "- (unary)" <NR> | <value> '.' <value> |
+//                  "sin(" <E> ")" | "cos(" <E> ")" | "tan(" <E> ")" |
 
 let parser tList = 
     let rec E tList = (T >> Eopt) tList         // >> is forward function composition operator: let inline (>>) f g x = g(f x)
@@ -113,14 +123,23 @@ let parser tList =
     and NR tList =
         match tList with 
         | Num value :: tail -> match tail with
-                               | Dot :: Num subvalue :: subtail -> subtail  // float
-                               | Dot :: subtail -> raise parseError         // incomplete float
-                               | _ -> tail                                  // int
+                               | Dot :: Num subvalue :: subtail -> subtail                           // float
+                               | Dot :: subtail -> parseError "No value after decimal point"         // incomplete float
+                               | _ -> tail                                                           // int
+        | Sin :: tail  -> match E tail with 
+                          | Rpar :: tail -> tail
+                          | _ -> parseError "Missing right bracket for sin"
+        | Cos :: tail  -> match E tail with 
+                          | Rpar :: tail -> tail
+                          | _ -> parseError "Missing right bracket for cos"
+        | Tan :: tail  -> match E tail with 
+                          | Rpar :: tail -> tail
+                          | _ -> parseError "Missing right bracket for tan"
         | Lpar :: tail -> match E tail with 
                           | Rpar :: tail -> tail
-                          | _ -> raise parseError
+                          | _ -> parseError "Missing right bracket"
         | UnarySub :: tail -> (NR) tail
-        | _ -> raise parseError
+        | _ -> parseError "Unknown syntax error"
     E tList
 
 // every time values are passed around they are followed by a vIsInt argument
@@ -147,7 +166,7 @@ let parseNeval tList =
                          Topt (tLst, value * tval, tvIsInt && vIsInt)
         | Div :: tail -> let (tLst, tval, tvIsInt) = P tail
                          match tval with
-                         | 0.0 -> raise divideByZeroError // check for division by 0
+                         | 0.0 ->  mathError "Division by zero" // check for division by 0
                          | _ -> if (tvIsInt && vIsInt) then
                                     Topt (tLst, floor(value / tval), tvIsInt && vIsInt) // integer division
                                 else
@@ -168,15 +187,29 @@ let parseNeval tList =
         match tList with 
         | Num value :: tail -> match tail with
                                | Dot :: Num subvalue :: subtail -> (subtail, intsToDouble(value,subvalue), false) // float
-                               | Dot :: subtail -> raise parseError                                                             // incomplete float
+                               | Dot :: subtail -> parseError "No value after decimal point"                                                            // incomplete float
                                | _ -> (tail, value, true)                                                                       // int
+
+        | Sin :: tail  -> let (tLst, tval, tvIsInt) = E tail
+                          match tLst with 
+                          | Rpar :: tail -> (tail, sin(tval), false)    // false as trig functions should always return a double
+                          | _ -> parseError "Missing right bracket for sin"
+        | Cos :: tail  -> let (tLst, tval, tvIsInt) = E tail
+                          match tLst with 
+                          | Rpar :: tail -> (tail, cos(tval), false)
+                          | _ -> parseError "Missing right bracket for cos"
+        | Tan :: tail  -> let (tLst, tval, tvIsInt) = E tail
+                          match tLst with 
+                          | Rpar :: tail -> (tail, tan(tval), false)
+                          | _ -> parseError "Missing right bracket for tan"
         | Lpar :: tail -> let (tLst, tval, tvIsInt) = E tail
                           match tLst with 
                           | Rpar :: tail -> (tail, tval, tvIsInt)
-                          | _ -> raise parseError
+                          | _ -> parseError "Missing right bracket"
+
         | UnarySub :: tail -> let (tLst, tval, tvIsInt) = T tail
                               Eopt (tLst, 0.0 - tval, tvIsInt)
-        | _ -> raise parseError
+        | _ -> parseError "Unknown syntax error"
     E tList
 
 let rec printTList (lst:list<terminal>) : list<string> = 
