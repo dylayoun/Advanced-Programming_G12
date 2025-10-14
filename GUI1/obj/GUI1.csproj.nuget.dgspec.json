@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "U:\\AP Coursework\\GitRepo\\GUI1\\GUI1.csproj": {}
+    "C:\\Users\\yhm23dyu\\Source\\Repos\\Advanced-Programming_G12\\GUI1\\GUI1.csproj": {}
   },
   "projects": {
-    "U:\\AP Coursework\\GitRepo\\GUI1\\GUI1.csproj": {
+    "C:\\Users\\yhm23dyu\\Source\\Repos\\Advanced-Programming_G12\\GUI1\\GUI1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "U:\\AP Coursework\\GitRepo\\GUI1\\GUI1.csproj",
+        "projectUniqueName": "C:\\Users\\yhm23dyu\\Source\\Repos\\Advanced-Programming_G12\\GUI1\\GUI1.csproj",
         "projectName": "GUI1",
-        "projectPath": "U:\\AP Coursework\\GitRepo\\GUI1\\GUI1.csproj",
+        "projectPath": "C:\\Users\\yhm23dyu\\Source\\Repos\\Advanced-Programming_G12\\GUI1\\GUI1.csproj",
         "packagesPath": "C:\\Users\\yhm23dyu\\.nuget\\packages\\",
-        "outputPath": "U:\\AP Coursework\\GitRepo\\GUI1\\obj\\",
+        "outputPath": "C:\\Users\\yhm23dyu\\Source\\Repos\\Advanced-Programming_G12\\GUI1\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -49,6 +49,16 @@
       "frameworks": {
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
+          "dependencies": {
+            "FSharp.Core": {
+              "target": "Package",
+              "version": "[9.0.303, )"
+            },
+            "FSharpx.Collections": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

@@ -8,4 +8,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="9.0.303" />
+    <PackageReference Include="FSharpx.Collections" Version="3.1.0" />
+  </ItemGroup>
+
 </Project>

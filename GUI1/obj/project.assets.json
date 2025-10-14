@@ -1,11 +1,170 @@
 {
   "version": 3,
   "targets": {
-    "net8.0-windows7.0": {}
+    "net8.0-windows7.0": {
+      "FSharp.Core/9.0.303": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.1/FSharp.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/FSharp.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "resource": {
+          "lib/netstandard2.1/cs/FSharp.Core.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netstandard2.1/de/FSharp.Core.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netstandard2.1/es/FSharp.Core.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netstandard2.1/fr/FSharp.Core.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netstandard2.1/it/FSharp.Core.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netstandard2.1/ja/FSharp.Core.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netstandard2.1/ko/FSharp.Core.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netstandard2.1/pl/FSharp.Core.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netstandard2.1/pt-BR/FSharp.Core.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netstandard2.1/ru/FSharp.Core.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netstandard2.1/tr/FSharp.Core.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netstandard2.1/zh-Hans/FSharp.Core.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netstandard2.1/zh-Hant/FSharp.Core.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "FSharpx.Collections/3.1.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.3.4"
+        },
+        "compile": {
+          "lib/netstandard2.0/FSharpx.Collections.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/FSharpx.Collections.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "FSharp.Core/9.0.303": {
+      "sha512": "6JlV8aD8qQvcmfoe/PMOxCHXc0uX4lR23u0fAyQtnVQxYULLoTZgwgZHSnRcuUHOvS3wULFWcwdnP1iwslH60g==",
+      "type": "package",
+      "path": "fsharp.core/9.0.303",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "fsharp.core.9.0.303.nupkg.sha512",
+        "fsharp.core.nuspec",
+        "lib/netstandard2.0/FSharp.Core.dll",
+        "lib/netstandard2.0/FSharp.Core.xml",
+        "lib/netstandard2.0/cs/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/de/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/es/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/fr/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/it/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/ja/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/ko/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/pl/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/pt-BR/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/ru/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/tr/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/zh-Hans/FSharp.Core.resources.dll",
+        "lib/netstandard2.0/zh-Hant/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/FSharp.Core.dll",
+        "lib/netstandard2.1/FSharp.Core.xml",
+        "lib/netstandard2.1/cs/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/de/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/es/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/fr/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/it/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/ja/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/ko/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/pl/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/pt-BR/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/ru/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/tr/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/zh-Hans/FSharp.Core.resources.dll",
+        "lib/netstandard2.1/zh-Hant/FSharp.Core.resources.dll"
+      ]
+    },
+    "FSharpx.Collections/3.1.0": {
+      "sha512": "VKK+/6zD4GoAYam1MLNd5NQTL+sG9i69MkCy7f67PUhGTuoXFVNgym1mcxKvD0Kt3Cbua3aoKlNP3G5WwT9mYw==",
+      "type": "package",
+      "path": "fsharpx.collections/3.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable/AssemblyInfo.fs",
+        "fable/ByteString.fs",
+        "fable/CircularBuffer.fs",
+        "fable/CircularBuffer.fsi",
+        "fable/Collections.fs",
+        "fable/DList.fs",
+        "fable/DList.fsi",
+        "fable/Deque.fs",
+        "fable/Deque.fsi",
+        "fable/Exceptions.fs",
+        "fable/FSharpx.Collections.fsproj",
+        "fable/Infrastructure.fs",
+        "fable/Interfaces.fs",
+        "fable/LazyList.fs",
+        "fable/LazyList.fsi",
+        "fable/Literals.fs",
+        "fable/NonEmptyList.fs",
+        "fable/PersistentHashMap.fs",
+        "fable/PersistentVector.fs",
+        "fable/PersistentVector.fsi",
+        "fable/PriorityQueue.fs",
+        "fable/Queue.fs",
+        "fable/Queue.fsi",
+        "fable/RandomAccessList.fs",
+        "fable/RandomAccessList.fsi",
+        "fable/ResizeArray.fs",
+        "fable/ResizeArray.fsi",
+        "fable/TaggedCollections.fs",
+        "fsharpx.collections.3.1.0.nupkg.sha512",
+        "fsharpx.collections.nuspec",
+        "lib/netstandard2.0/FSharpx.Collections.dll",
+        "lib/netstandard2.0/FSharpx.Collections.pdb",
+        "lib/netstandard2.0/FSharpx.Collections.xml"
+      ]
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0-windows7.0": []
+    "net8.0-windows7.0": [
+      "FSharp.Core >= 9.0.303",
+      "FSharpx.Collections >= 3.1.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\yhm23dyu\\.nuget\\packages\\": {},
@@ -14,11 +173,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "U:\\AP Coursework\\GitRepo\\GUI1\\GUI1.csproj",
+      "projectUniqueName": "C:\\Users\\yhm23dyu\\Source\\Repos\\Advanced-Programming_G12\\GUI1\\GUI1.csproj",
       "projectName": "GUI1",
-      "projectPath": "U:\\AP Coursework\\GitRepo\\GUI1\\GUI1.csproj",
+      "projectPath": "C:\\Users\\yhm23dyu\\Source\\Repos\\Advanced-Programming_G12\\GUI1\\GUI1.csproj",
       "packagesPath": "C:\\Users\\yhm23dyu\\.nuget\\packages\\",
-      "outputPath": "U:\\AP Coursework\\GitRepo\\GUI1\\obj\\",
+      "outputPath": "C:\\Users\\yhm23dyu\\Source\\Repos\\Advanced-Programming_G12\\GUI1\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -56,6 +215,16 @@
     "frameworks": {
       "net8.0-windows7.0": {
         "targetAlias": "net8.0-windows",
+        "dependencies": {
+          "FSharp.Core": {
+            "target": "Package",
+            "version": "[9.0.303, )"
+          },
+          "FSharpx.Collections": {
+            "target": "Package",
+            "version": "[3.1.0, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",

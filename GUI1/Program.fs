@@ -3,6 +3,8 @@
 // Date: 23/10/2022
 // Reference: Peter Sestoft, Grammars and parsing with F#, Tech. Report
 
+namespace FSharpInterpreter
+
 open System
 
 type terminal = 
