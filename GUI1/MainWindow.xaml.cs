@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using Microsoft.FSharp.Collections;
+using Microsoft.FSharp.Core;
+using System.Diagnostics.Metrics;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,8 +11,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.FSharp.Core;
-using Microsoft.FSharp.Collections;
 
 namespace GUI1
 {
@@ -32,7 +33,8 @@ namespace GUI1
         private void SendText_Button_Click(object sender, RoutedEventArgs e)
         {
             string input_txt = Input_Text.Text;
-
+            
+            string oList = Lexer.lexer(input_txt);
 // Add the f# stub for the interpreter
         }
     }
