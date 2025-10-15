@@ -20,3 +20,12 @@ U:\AP Coursework\GUI1\GUI1\obj\Debug\net8.0-windows\refint\GUI1.dll
 U:\AP Coursework\GUI1\GUI1\obj\Debug\net8.0-windows\GUI1.pdb
 U:\AP Coursework\GUI1\GUI1\obj\Debug\net8.0-windows\GUI1.genruntimeconfig.cache
 U:\AP Coursework\GUI1\GUI1\obj\Debug\net8.0-windows\ref\GUI1.dll
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\GUI1.csproj.AssemblyReference.cache
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\HelpWindow.g.cs
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\App.g.cs
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\GUI1_MarkupCompile.cache
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\GUI1_MarkupCompile.lref
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\GUI1.dll
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\refint\GUI1.dll
+C:\Users\yhm23dyu\Source\Repos\Advanced-Programming_G12\GUI1\obj\Debug\net8.0-windows\GUI1.pdb

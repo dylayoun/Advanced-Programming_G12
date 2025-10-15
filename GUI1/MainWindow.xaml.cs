@@ -35,6 +35,8 @@ namespace GUI1
             string input_txt = Input_Text.Text;
             
             string oList = Lexer.lexer(input_txt);
+            
+            Console.WriteLine(oList);
 // Add the f# stub for the interpreter
         }
     }

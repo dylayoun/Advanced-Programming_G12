@@ -51,40 +51,40 @@ let intsToDouble(a:int, b:int) =
            (double)a + (double)truncB*(10.0 ** -(digitsInB))
 
 
+module Lexer = 
+    let lexer input = 
+        let rec scan input last_was_digit =
+            match input with
+            | [] -> []
+            | '+'::tail -> Add :: scan tail false
+            | '-'::tail -> match last_was_digit with
+                            | true -> Sub :: scan tail false
+                            | false -> UnarySub :: scan tail false
+            | '*'::tail -> Mul :: scan tail false
+            | '/'::tail -> Div :: scan tail false
+            | '%'::tail -> Mod :: scan tail false
+            | '^'::tail -> Exp :: scan tail false
+            | '('::tail -> Lpar:: scan tail false
+            | ')'::tail -> Rpar:: scan tail false
+            | '.'::tail -> Dot :: scan tail true
+            | 's'::'i'::'n'::'('::tail -> Sin :: scan tail false
+            | 'c'::'o'::'s'::'('::tail -> Cos :: scan tail false
+            | 't'::'a'::'n'::'('::tail -> Tan :: scan tail false
+            | c :: tail when isblank c -> scan tail last_was_digit
 
-let lexer input = 
-    let rec scan input last_was_digit =
-        match input with
-        | [] -> []
-        | '+'::tail -> Add :: scan tail false
-        | '-'::tail -> match last_was_digit with
-                        | true -> Sub :: scan tail false
-                        | false -> UnarySub :: scan tail false
-        | '*'::tail -> Mul :: scan tail false
-        | '/'::tail -> Div :: scan tail false
-        | '%'::tail -> Mod :: scan tail false
-        | '^'::tail -> Exp :: scan tail false
-        | '('::tail -> Lpar:: scan tail false
-        | ')'::tail -> Rpar:: scan tail false
-        | '.'::tail -> Dot :: scan tail true
-        | 's'::'i'::'n'::'('::tail -> Sin :: scan tail false
-        | 'c'::'o'::'s'::'('::tail -> Cos :: scan tail false
-        | 't'::'a'::'n'::'('::tail -> Tan :: scan tail false
-        | c :: tail when isblank c -> scan tail last_was_digit
-
-        // it seems a bit odd but in order to store leading 0s in decimal numbers they are moved to the end of the number
-        // only if the last symbol was a number (i.e. this is a decimal) - this is so eg. 04 -> Num 4 but 23.04 -> Num 23 Dot Num 40
-        // there's almost definitely a cleaner way to do this but it works
-        | c :: tail when isdigit c -> match last_was_digit with
-                                      | true -> let (iStr, count) = getLeadingZeroes(tail, 0)
-                                                let (iStr, iVal) = scInt(tail, intVal c)
-                                                let trunc_iVal = removeTrailingZeroes(iVal)
-                                                let modified_iVal = trunc_iVal * (int)(10.0 ** ((double)count+1.0))
-                                                Num modified_iVal :: scan iStr true
-                                      | false -> let (iStr, iVal) = scInt(tail, intVal c)
-                                                 Num iVal :: scan iStr true
-        | _ -> lexError (sprintf "Unrecognised character '%c'" input[0])
-    scan (str2lst input) false
+            // it seems a bit odd but in order to store leading 0s in decimal numbers they are moved to the end of the number
+            // only if the last symbol was a number (i.e. this is a decimal) - this is so eg. 04 -> Num 4 but 23.04 -> Num 23 Dot Num 40
+            // there's almost definitely a cleaner way to do this but it works
+            | c :: tail when isdigit c -> match last_was_digit with
+                                          | true -> let (iStr, count) = getLeadingZeroes(tail, 0)
+                                                    let (iStr, iVal) = scInt(tail, intVal c)
+                                                    let trunc_iVal = removeTrailingZeroes(iVal)
+                                                    let modified_iVal = trunc_iVal * (int)(10.0 ** ((double)count+1.0))
+                                                    Num modified_iVal :: scan iStr true
+                                          | false -> let (iStr, iVal) = scInt(tail, intVal c)
+                                                     Num iVal :: scan iStr true
+            | _ -> lexError (sprintf "Unrecognised character '%c'" input[0])
+        scan (str2lst input) false
 
 let getInputString() : string = 
     Console.Write("Enter an expression: ")
