@@ -3,12 +3,10 @@
 // Date: 23/10/2022
 // Reference: Peter Sestoft, Grammars and parsing with F#, Tech. Report
 
-namespace FSharpInterpreter
-
 open System
 
 type terminal = 
-    Add | Sub | UnarySub | Mul | Div | Mod | Exp | Dot
+    Add | Sub | UnarySub | Mul | Div | Mod | Exp | Dot | SF // SF stands for Standard Form
     | Sin | Cos | Tan | Lpar | Rpar | Num of int
 
 let str2lst s = [for c in s -> c]
@@ -23,10 +21,12 @@ let mathError message = raise (System.Exception(sprintf "Maths error: %s" messag
 // get how many of the first characters in a string are 0s
 // used for reading decimals
 // count should have an initial value of 0 passed in
-let rec getLeadingZeroes(iStr, count) =
+let rec getLeadingZeroesStep(iStr, count) =
     match iStr with
-    | '0' :: tail -> getLeadingZeroes(tail, count+1)
+    | '0' :: tail -> getLeadingZeroesStep(tail, count+1)
     | _ -> (iStr, count)
+
+let getLeadingZeroes(iStr) = getLeadingZeroesStep(iStr,0)
 
 let rec removeTrailingZeroes(num) = 
     if (num = 0) then
@@ -50,41 +50,46 @@ let intsToDouble(a:int, b:int) =
            let truncB = removeTrailingZeroes(b)
            (double)a + (double)truncB*(10.0 ** -(digitsInB))
 
+// check if a double ends in .0
+let doubleIsInt a = a.Equals(floor(a))
 
-module Lexer = 
-    let lexer input = 
-        let rec scan input last_was_digit =
-            match input with
-            | [] -> []
-            | '+'::tail -> Add :: scan tail false
-            | '-'::tail -> match last_was_digit with
-                            | true -> Sub :: scan tail false
-                            | false -> UnarySub :: scan tail false
-            | '*'::tail -> Mul :: scan tail false
-            | '/'::tail -> Div :: scan tail false
-            | '%'::tail -> Mod :: scan tail false
-            | '^'::tail -> Exp :: scan tail false
-            | '('::tail -> Lpar:: scan tail false
-            | ')'::tail -> Rpar:: scan tail false
-            | '.'::tail -> Dot :: scan tail true
-            | 's'::'i'::'n'::'('::tail -> Sin :: scan tail false
-            | 'c'::'o'::'s'::'('::tail -> Cos :: scan tail false
-            | 't'::'a'::'n'::'('::tail -> Tan :: scan tail false
-            | c :: tail when isblank c -> scan tail last_was_digit
 
-            // it seems a bit odd but in order to store leading 0s in decimal numbers they are moved to the end of the number
-            // only if the last symbol was a number (i.e. this is a decimal) - this is so eg. 04 -> Num 4 but 23.04 -> Num 23 Dot Num 40
-            // there's almost definitely a cleaner way to do this but it works
-            | c :: tail when isdigit c -> match last_was_digit with
-                                          | true -> let (iStr, count) = getLeadingZeroes(tail, 0)
-                                                    let (iStr, iVal) = scInt(tail, intVal c)
-                                                    let trunc_iVal = removeTrailingZeroes(iVal)
-                                                    let modified_iVal = trunc_iVal * (int)(10.0 ** ((double)count+1.0))
-                                                    Num modified_iVal :: scan iStr true
-                                          | false -> let (iStr, iVal) = scInt(tail, intVal c)
-                                                     Num iVal :: scan iStr true
-            | _ -> lexError (sprintf "Unrecognised character '%c'" input[0])
-        scan (str2lst input) false
+
+let lexer input = 
+    let rec scan input last_was_digit =
+        match input with
+        | [] -> []
+        | '+'::tail -> Add :: scan tail false
+        | '-'::tail -> match last_was_digit with
+                        | true -> Sub :: scan tail false
+                        | false -> UnarySub :: scan tail false
+        | '*'::tail -> Mul :: scan tail false
+        | '/'::tail -> Div :: scan tail false
+        | '%'::tail -> Mod :: scan tail false
+        | '^'::tail -> Exp :: scan tail false
+        | '('::tail -> Lpar:: scan tail false
+        | ')'::tail -> Rpar:: scan tail false
+        | '.'::tail -> Dot :: scan tail true
+        | 'E'::tail -> SF  :: scan tail false // treated as not a number to prevent decimal stuff below
+        | 's'::'i'::'n'::'('::tail -> Sin :: scan tail false
+        | 'c'::'o'::'s'::'('::tail -> Cos :: scan tail false
+        | 't'::'a'::'n'::'('::tail -> Tan :: scan tail false
+        | c :: tail when isblank c -> scan tail last_was_digit
+
+        // it seems a bit odd but in order to store leading 0s in decimal numbers they are moved to the end of the number
+        // only if the last symbol was a number (i.e. this is a decimal) - this is so eg. 04 -> Num 4 but 23.04 -> Num 23 Dot Num 40
+        // there's almost definitely a cleaner way to do this but it works
+        | c :: tail when isdigit c -> match last_was_digit with
+                                      | true -> let full_str = c :: tail
+                                                let (iStr, count) = getLeadingZeroes(full_str)
+                                                let (iStr, iVal) = scInt(tail, intVal c)
+                                                let trunc_iVal = removeTrailingZeroes(iVal)
+                                                let modified_iVal = trunc_iVal * (int)(10.0 ** ((double)count))
+                                                Num modified_iVal :: scan iStr true
+                                      | false -> let (iStr, iVal) = scInt(tail, intVal c)
+                                                 Num iVal :: scan iStr true
+        | _ -> lexError (sprintf "Unrecognised character '%c'" input[0])
+    scan (str2lst input) false
 
 let getInputString() : string = 
     Console.Write("Enter an expression: ")
@@ -95,10 +100,12 @@ let getInputString() : string =
 // <Eopt>     ::= "+" <T> <Eopt> | "-" <T> <Eopt> | <empty>
 // <T>        ::= <P> <Topt>
 // <Topt>     ::= "*" <P> <Topt> | "/" <P> <Topt> | "%" <P> <Topt> | <empty>
-// <P>        ::= <NR> <Popt>
-// <Popt>     ::= "^" <NR> <Popt> | <empty>
-// <NR>       ::= "Num" <value> | "(" <E> ")" | "- (unary)" <NR> | <value> '.' <value> |
-//                  "sin(" <E> ")" | "cos(" <E> ")" | "tan(" <E> ")" |
+// <P>        ::= <S> <Popt>
+// <Popt>     ::= "^" <S> <Popt> | <empty>
+// <S>        ::= <NR> <Sopt>
+// <Sopt>     ::= "E" <NR> | <empty>
+// <NR>       ::= "Num" <value> | "(" <E> ")" | "- (unary)" <NR> | <value> '.' <value> | 
+//                  "sin(" <E> ")" | "cos(" <E> ")" | "tan(" <E> ")"
 
 let parser tList = 
     let rec E tList = (T >> Eopt) tList         // >> is forward function composition operator: let inline (>>) f g x = g(f x)
@@ -116,17 +123,23 @@ let parser tList =
         | Mod :: tail -> (P >> Topt) tail
         | _ -> tList
 
-    and P tList = (NR >> Popt) tList
+    and P tList = (S >> Popt) tList
     and Popt tList = 
         match tList with
-        | Exp :: tail -> (NR >> Popt) tail
+        | Exp :: tail -> (S >> Popt) tail
+        | _ -> tList
+
+    and S tList = (NR >> Sopt) tList
+    and Sopt tList =
+        match tList with
+        | SF :: tail -> (NR) tail
         | _ -> tList
 
     and NR tList =
         match tList with 
         | Num value :: tail -> match tail with
                                | Dot :: Num subvalue :: subtail -> subtail                           // float
-                               | Dot :: subtail -> parseError "No value after decimal point"         // incomplete float
+                               | Dot :: subtail -> parseError "Missing value after decimal point"    // incomplete float
                                | _ -> tail                                                           // int
         | Sin :: tail  -> match E tail with 
                           | Rpar :: tail -> tail
@@ -177,20 +190,28 @@ let parseNeval tList =
                          Topt (tLst, value % tval, tvIsInt && vIsInt)
         | _ -> (tList, value, vIsInt)
 
-    and P tList = (NR >> Popt) tList
+    and P tList = (S >> Popt) tList
     and Popt (tList, value: double, vIsInt) =
         match tList with
-        | Exp :: tail -> let (tLst, tval, tvIsInt) = NR tail
+        | Exp :: tail -> let (tLst, tval, tvIsInt) = S tail
                          let result = (value ** tval)
                          Popt (tLst, result, vIsInt && tvIsInt)
+        | _ -> (tList, value, vIsInt)
+
+    and S tList = (NR >> Sopt) tList
+    and Sopt (tList, value: double, vIsInt) =
+        match tList with
+        | SF :: tail -> let (tLst, tval, tvIsInt) = NR tail
+                        let result = (value * (10.0 ** tval))
+                        (tLst, result, doubleIsInt result)
         | _ -> (tList, value, vIsInt)
 
     and NR tList =
         match tList with 
         | Num value :: tail -> match tail with
                                | Dot :: Num subvalue :: subtail -> (subtail, intsToDouble(value,subvalue), false) // float
-                               | Dot :: subtail -> parseError "No value after decimal point"                                                            // incomplete float
-                               | _ -> (tail, value, true)                                                                       // int
+                               | Dot :: subtail -> parseError "No value after decimal point"                      // incomplete float
+                               | _ -> (tail, value, true)                                                         // int
 
         | Sin :: tail  -> let (tLst, tval, tvIsInt) = E tail
                           match tLst with 
